@@ -15,13 +15,13 @@ public class QuizActivity extends AppCompatActivity {
     private Button mNextButton;
     private TextView mQuestionTextView;
 
-    private Question[] mQuestionBank = new Question[] {
-            new Question( R.string.question_australia, true),
-            new Question( R.string.question_oceans, true),
-            new Question( R.string.question_mideast, false),
-            new Question( R.string.question_africa, false),
-            new Question( R.string.question_americas, true),
-            new Question( R.string.question_asia, true), };
+    private Question[] mQuestionBank = new Question[]{
+            new Question(R.string.question_australia, true),
+            new Question(R.string.question_oceans, true),
+            new Question(R.string.question_mideast, false),
+            new Question(R.string.question_africa, false),
+            new Question(R.string.question_americas, true),
+            new Question(R.string.question_asia, true),};
 
     private int mCurrentIndex = 0;
 
@@ -30,7 +30,14 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        mQuestionTextView = (TextView) findViewById( R.id.question_text_view);
+        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
+        mQuestionTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                updateQuestion();
+            }
+        });
 
         trueButton = (Button) findViewById(R.id.true_button);
         falseButton = (Button) findViewById(R.id.false_button);
@@ -38,7 +45,7 @@ public class QuizActivity extends AppCompatActivity {
         trueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast feedback = Toast.makeText( QuizActivity.this, getFeedback(true), Toast.LENGTH_SHORT);
+                Toast feedback = Toast.makeText(QuizActivity.this, getFeedback(true), Toast.LENGTH_SHORT);
                 feedback.setGravity(Gravity.TOP, 0, 16);
                 feedback.show();
             }
@@ -46,14 +53,15 @@ public class QuizActivity extends AppCompatActivity {
         falseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast feedback = Toast.makeText( QuizActivity.this, getFeedback(false), Toast.LENGTH_SHORT);
+                Toast feedback = Toast.makeText(QuizActivity.this, getFeedback(false), Toast.LENGTH_SHORT);
                 feedback.setGravity(Gravity.TOP, 0, 16);
                 feedback.show();
             }
         });
-        mNextButton = (Button) findViewById( R.id.next_button);
-        mNextButton.setOnClickListener( new View.OnClickListener() {
-            @Override public void onClick( View v) {
+        mNextButton = (Button) findViewById(R.id.next_button);
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
             }
@@ -63,15 +71,14 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void updateQuestion() {
-        int question = mQuestionBank[ mCurrentIndex].getTextId();
-        mQuestionTextView.setText( question);
+        int question = mQuestionBank[mCurrentIndex].getTextId();
+        mQuestionTextView.setText(question);
     }
 
     private int getFeedback(boolean answer) {
-        if(answer == mQuestionBank[mCurrentIndex].isAnswerTrue()) {
+        if (answer == mQuestionBank[mCurrentIndex].isAnswerTrue()) {
             return R.string.correct_toast;
-        }
-        else {
+        } else {
             return R.string.wrong_toast;
         }
     }
