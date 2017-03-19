@@ -15,4 +15,5 @@
 
     <string name ="correct_toast">Correct!</string>
     <string name ="wrong_toast">Wrong!</string>
+    <string name="score_toast">Your score is: %.2f</string>
 </resources>

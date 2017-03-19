@@ -1,5 +1,6 @@
 package com.smackwerks.geoquiz;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_asia, true),};
 
     private boolean[] answered = new boolean[mQuestionBank.length];
+    private float score = 0;
 
     private int mCurrentIndex = 0;
 
@@ -139,10 +141,29 @@ public class QuizActivity extends AppCompatActivity {
 
     private void setAnswered(boolean isAnswered) {
         answered[mCurrentIndex] = isAnswered;
+
+        boolean allAnswered = true;
+        for (int i = 0; allAnswered && i < answered.length; i++) {
+            allAnswered = allAnswered && answered[i];
+        }
+
+        if (allAnswered) {
+            displayScore();
+        }
+    }
+
+    private void displayScore() {
+        Toast feedback = Toast.makeText(
+                QuizActivity.this,
+                getString(R.string.score_toast, 100 * score / mQuestionBank.length),
+                Toast.LENGTH_LONG);
+        feedback.setGravity(Gravity.TOP, 0, 16);
+        feedback.show();
     }
 
     private int getFeedback(boolean answer) {
         if (answer == mQuestionBank[mCurrentIndex].isAnswerTrue()) {
+            score++; // TODO: avoid side effect nightmare
             return R.string.correct_toast;
         } else {
             return R.string.wrong_toast;
