@@ -12,6 +12,8 @@ import android.widget.Toast;
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = QuizActivity.class.getSimpleName();
     private static final String KEY_INDEX = "index";
+    private static final String KEY_ANSWERED = "answered";
+
     private Button trueButton;
     private Button falseButton;
     private Button mNextButton;
@@ -24,6 +26,8 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_africa, false),
             new Question(R.string.question_americas, true),
             new Question(R.string.question_asia, true),};
+
+    private boolean[] answered = new boolean[mQuestionBank.length];
 
     private int mCurrentIndex = 0;
 
@@ -59,19 +63,16 @@ public class QuizActivity extends AppCompatActivity {
         trueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast feedback = Toast.makeText(QuizActivity.this, getFeedback(true), Toast.LENGTH_SHORT);
-                feedback.setGravity(Gravity.TOP, 0, 16);
-                feedback.show();
+                showFeedback(true);
             }
         });
         falseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast feedback = Toast.makeText(QuizActivity.this, getFeedback(false), Toast.LENGTH_SHORT);
-                feedback.setGravity(Gravity.TOP, 0, 16);
-                feedback.show();
+                showFeedback(false);
             }
         });
+
         mNextButton = (Button) findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +82,14 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
+        updateQuestion();
+    }
+
+    private void showFeedback(boolean answer) {
+        Toast feedback = Toast.makeText(QuizActivity.this, getFeedback(answer), Toast.LENGTH_SHORT);
+        feedback.setGravity(Gravity.TOP, 0, 16);
+        feedback.show();
+        setAnswered(true);
         updateQuestion();
     }
 
@@ -117,6 +126,19 @@ public class QuizActivity extends AppCompatActivity {
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextId();
         mQuestionTextView.setText(question);
+
+        if(answered[mCurrentIndex]) {
+            trueButton.setEnabled(false);
+            falseButton.setEnabled(false);
+        }
+        else {
+            trueButton.setEnabled(true);
+            falseButton.setEnabled(true);
+        }
+    }
+
+    private void setAnswered(boolean isAnswered) {
+        answered[mCurrentIndex] = isAnswered;
     }
 
     private int getFeedback(boolean answer) {
