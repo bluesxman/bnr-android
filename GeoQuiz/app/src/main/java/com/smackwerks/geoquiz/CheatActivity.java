@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class CheatActivity extends AppCompatActivity {
+    private static final String KEY_CHEATED = "cheated";
     private static final String EXTRA_ANSWER_IS_TRUE = "com.smackwerks.geoquiz.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
 
@@ -26,11 +27,17 @@ public class CheatActivity extends AppCompatActivity {
     private boolean mAnswerIsTrue;
     private TextView mAnswerTextView;
     private Button mShowAnswerButton;
+    private boolean mHasCheated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
+
+        if (savedInstanceState != null) {
+            mHasCheated = savedInstanceState.getBoolean(KEY_CHEATED);
+            setAnswerShownResult(mHasCheated);
+        }
 
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
 
@@ -41,9 +48,15 @@ public class CheatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAnswerTextView.setText(mAnswerIsTrue ? R.string.true_button : R.string.false_button);
+                mHasCheated = true;
                 setAnswerShownResult(true);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(KEY_CHEATED, mHasCheated);
     }
 
     private void setAnswerShownResult(boolean isAnswerShown) {

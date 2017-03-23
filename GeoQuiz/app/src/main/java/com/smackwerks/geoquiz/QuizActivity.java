@@ -14,7 +14,7 @@ import android.widget.Toast;
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = QuizActivity.class.getSimpleName();
     private static final String KEY_INDEX = "index";
-    private static final String KEY_ANSWERED = "answered";
+    private static final String KEY_CHEATS = "cheats";
     private static final int REQUEST_CODE_CHEAT = 0;
 
     private Button trueButton;
@@ -22,7 +22,7 @@ public class QuizActivity extends AppCompatActivity {
     private Button mNextButton;
     private Button mCheatButton;
     private TextView mQuestionTextView;
-    private boolean mIsCheater;
+    private boolean[] mIsCheater;
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -42,6 +42,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState()");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putBooleanArray(KEY_CHEATS, mIsCheater);
     }
 
     @Override
@@ -52,6 +53,10 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
+            mIsCheater = savedInstanceState.getBooleanArray(KEY_CHEATS);
+        }
+        else {
+            mIsCheater = new boolean[mQuestionBank.length];
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -84,7 +89,6 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -109,7 +113,7 @@ public class QuizActivity extends AppCompatActivity {
             if (data == null){
                 return;
             }
-            mIsCheater = CheatActivity.wasAnswerShown(data);
+            mIsCheater[mCurrentIndex] = CheatActivity.wasAnswerShown(data);
         }
     }
 
@@ -188,7 +192,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private int getFeedback(boolean answer) {
-        if(mIsCheater) {
+        if(mIsCheater[mCurrentIndex]) {
             return R.string.judgment_toast;
         }
         else {
