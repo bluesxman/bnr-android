@@ -45,4 +45,18 @@ public class Crime {
     public void setSolved(boolean solved) {
         mSolved = solved;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Crime) {
+            return mId.equals(((Crime) obj).getId());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return mId.hashCode();
+    }
 }

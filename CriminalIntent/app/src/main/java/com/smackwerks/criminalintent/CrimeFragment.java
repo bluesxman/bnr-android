@@ -1,6 +1,7 @@
 package com.smackwerks.criminalintent;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,8 @@ import java.util.UUID;
  */
 
 public class CrimeFragment extends Fragment {
-    private static final String ARG_CRIME_ID = "crime_id";
+    public static final String ARG_CRIME_ID = "crime_id";
+    public static final int MODIFIED_RESULT = 1;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -45,6 +47,14 @@ public class CrimeFragment extends Fragment {
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
+
+
+    private void returnModified() {
+        Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+        intent.putExtra(ARG_CRIME_ID, mCrime.getId());
+        getActivity().setResult(MODIFIED_RESULT, intent);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +70,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                returnModified();
             }
 
             @Override
@@ -77,9 +88,9 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                returnModified();
             }
         });
-
 
         return v;
     }

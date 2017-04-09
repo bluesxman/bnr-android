@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import java.util.UUID;
 
 public class CrimeActivity extends SingleFragmentActivity {
-    private static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
+    public static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
 
     public static Intent newIntent(Context packageContext, UUID crimeId) {
         Intent intent = new Intent(packageContext, CrimeActivity.class);
@@ -20,4 +20,5 @@ public class CrimeActivity extends SingleFragmentActivity {
         UUID uuid = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
         return CrimeFragment.newInstance(uuid);
     }
+
 }
