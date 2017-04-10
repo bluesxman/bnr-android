@@ -53,5 +53,7 @@ public class CrimePagerActivity extends AppCompatActivity {
                 return mCrimes.size();
             }
         });
+
+        mViewPager.setCurrentItem(CrimeLab.get(this).getPosition(crimeId));
     }
 }
