@@ -13,16 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by jwn on 3/26/2017.
  */
 
 public class CrimeListFragment extends Fragment {
-    private static String DATE_FORMAT = "EEEE, MMM dd, yyyy";
+    private static final String DATE_FORMAT = "EEEE, MMM dd, yyyy";
+    private static final int EDIT_CRIME_REQUEST = 1; // returns -1 if not modified
+    private static final int NO_CHANGES = -1;
 
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
+    private int position;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,11 +39,32 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else if (position != NO_CHANGES){
+            mAdapter.notifyItemChanged(position);
+        }
+
+        position = NO_CHANGES;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == CrimeFragment.MODIFIED_RESULT && requestCode == EDIT_CRIME_REQUEST) {
+            UUID id = (UUID) data.getSerializableExtra(CrimeFragment.ARG_CRIME_ID);
+            position = CrimeLab.get(getActivity()).getPosition(id);
+        }
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -67,8 +92,8 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
-            startActivity(intent);
+            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+            startActivityForResult(intent, EDIT_CRIME_REQUEST);
         }
     }
 
