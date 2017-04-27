@@ -52,8 +52,8 @@ public class CrimeListFragment extends Fragment {
         if (mAdapter == null) {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
-        } else if (position != NO_CHANGES){
-            mAdapter.notifyItemChanged(position);
+        } else {
+            mAdapter.notifyDataSetChanged();
         }
 
         position = NO_CHANGES;
